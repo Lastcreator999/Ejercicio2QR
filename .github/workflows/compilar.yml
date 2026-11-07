@@ -1,0 +1,52 @@
+# Compila la app en los servidores de GitHub cada vez que haces push.
+# - Android: genera el APK de depuración (descárgalo en la pestaña Actions > Artifacts).
+# - iOS: compila para el simulador de iPhone en una Mac de GitHub (sirve aunque no tengas Mac).
+name: Compilar Android e iOS
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: android-actions/setup-android@v3
+      - run: npm install -g nativescript
+      - run: ns usage-reporting disable && ns error-reporting disable
+      - run: npm install
+      - run: ns build android
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Ejercicio2QR-android-apk
+          path: platforms/android/app/build/outputs/apk/debug/*.apk
+
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install -g nativescript
+      - run: ns usage-reporting disable && ns error-reporting disable
+      - run: npm install
+      - run: ns build ios
+        env:
+          NSSkipMLKitFromIOSSimulator: '1'  # MLKit no trae binarios para el simulador
+      - name: Empaquetar la app del simulador (.zip)
+        run: |
+          cd platforms/ios/build/Debug-iphonesimulator
+          zip -r ../../../../Ejercicio2QR-simulador.zip *.app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Ejercicio2QR-ios-simulador
+          path: Ejercicio2QR-simulador.zip

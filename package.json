@@ -1,0 +1,17 @@
+{
+  "name": "Ejercicio2QR",
+  "main": "app/app.ts",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@nativescript/core": "~9.1.0",
+    "@nativescript/mlkit-barcode-scanning": "^3.0.4",
+    "@nativescript/mlkit-core": "^3.0.4",
+    "@nativescript/theme": "^3.1.0"
+  },
+  "devDependencies": {
+    "@nativescript/types": "~9.0.0",
+    "@nativescript/webpack": "~5.0.25",
+    "typescript": "~6.0.0"
+  }
+}

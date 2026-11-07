@@ -1,0 +1,12 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd"
+      xmlns:ui="@nativescript/mlkit-core"
+      navigatingTo="navigatingTo">
+  <ActionBar title="Ejercicio 2: Lector QR" />
+  <StackLayout class="p-20">
+    <ui:MLKitView id="camara" detectionType="barcode"
+                  detection="{{ onDetection }}" height="300" />
+    <Label text="Texto leído:" class="m-t-10" />
+    <Label text="{{ textoQR }}" textWrap="true" class="h2" />
+    <Button text="Activar cámara" tap="{{ activar }}" />
+  </StackLayout>
+</Page>
