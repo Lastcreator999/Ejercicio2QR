@@ -1,0 +1,11 @@
+{
+  "files.exclude": {
+    "platforms": true,
+    "hooks": true
+  },
+  "search.exclude": {
+    "node_modules": true,
+    "platforms": true
+  },
+  "typescript.tsdk": "node_modules/typescript/lib"
+}

@@ -12,6 +12,14 @@
   "devDependencies": {
     "@nativescript/types": "~9.0.0",
     "@nativescript/webpack": "~5.0.25",
+    "nativescript": "^9.1.2",
     "typescript": "~6.0.0"
+  },
+  "scripts": {
+    "android": "node scripts/ejecutar.js android",
+    "ios": "node scripts/ejecutar.js ios",
+    "ios:iphone": "node scripts/ejecutar.js ios:iphone",
+    "doctor": "node scripts/ejecutar.js doctor",
+    "limpiar": "node scripts/ejecutar.js limpiar"
   }
 }

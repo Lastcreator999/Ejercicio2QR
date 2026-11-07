@@ -15,7 +15,40 @@ Abre la cámara dentro de la app, detecta un código QR y muestra el texto que c
 
 Plugins: `@nativescript/mlkit-core` y `@nativescript/mlkit-barcode-scanning`.
 
-## 1. Preparar la computadora (una sola vez, Windows)
+## ⚡ Inicio rápido en VS Code (Macs de la escuela)
+
+No hace falta instalar nada global ni configurar variables: el proyecto trae su propia CLI de NativeScript y el script `scripts/ejecutar.js` encuentra solo el SDK de Android y el Java que vienen con Android Studio.
+
+**Solo la primera vez en cada Mac** (si ya está hecho, sáltalo):
+
+1. Abre **Android Studio** una vez para que instale el SDK, y en *Device Manager* crea un emulador (por ejemplo *Pixel*).
+2. Abre **Xcode** una vez, acepta la licencia y en *Settings > Components* descarga el simulador de iOS.
+3. Verifica que esté **CocoaPods** (lo necesita iOS): `pod --version`. Si no está: `brew install cocoapods`.
+
+**Cada vez:**
+
+1. VS Code → *File > Open Folder…* → elige la carpeta del proyecto.
+2. *Terminal > Run Task…* → **1. Instalar dependencias (npm install)** (solo después de clonar).
+3. Presiona **⌘ ⇧ B** (Cmd + Shift + B) y elige:
+   - **Android – emulador de Android Studio**
+   - **iOS – simulador de iPhone (Xcode)**
+   - **iPhone real conectado por cable**
+
+El emulador o simulador se abre solo y la app se instala. Al guardar un archivo, la app se recarga. Para detenerla: clic en la terminal y **Ctrl + C**.
+
+También funciona desde la terminal de VS Code:
+
+| Comando | Qué hace |
+|---|---|
+| `npm run android` | Ejecuta en el emulador de Android Studio |
+| `npm run ios` | Ejecuta en el simulador de iPhone (solo Mac) |
+| `npm run ios:iphone` | Ejecuta en un iPhone conectado (solo Mac) |
+| `npm run doctor` | Revisa que la computadora tenga todo instalado |
+| `npm run limpiar` | Borra la compilación; úsalo si algo se "atora" o al cambiar entre simulador e iPhone real |
+
+> Si no arranca ningún emulador de Android, ábrelo tú desde *Android Studio > Device Manager* (▶) y vuelve a ejecutar la tarea.
+
+## 1. Preparar la computadora en Windows (opcional, en casa)
 
 Necesitas: **Node.js 22 LTS**, **JDK 21**, **Android Studio** (solo para el SDK y el emulador) y **Git**.
 
@@ -47,7 +80,7 @@ npm install
 
 1. Abre **Android Studio > More Actions > Virtual Device Manager** y arranca un emulador (o conecta tu celular con *Depuración USB* activada).
 2. Verifica que aparezca el dispositivo: `adb devices`
-3. Ejecuta: `ns run android`
+3. Ejecuta: `npm run android` (o `ns run android` si instalaste la CLI global)
 
 La primera compilación tarda varios minutos (descarga Gradle y dependencias). Después, cada vez que guardas un archivo la app se recarga sola.
 

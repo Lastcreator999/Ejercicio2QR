@@ -1,0 +1,68 @@
+{
+  // Tareas para ejecutar la app desde VS Code.
+  // Atajo: Cmd+Shift+B (Mac) o Ctrl+Shift+B (Windows) -> elige Android o iOS.
+  // También: menú Terminal > Run Task...
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "▶ Ejecutar app (elegir emulador)",
+      "type": "shell",
+      "command": "npm run ${input:plataforma}",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": [],
+      "presentation": { "panel": "dedicated", "focus": true, "clear": true }
+    },
+    {
+      "label": "▶ Android (emulador de Android Studio)",
+      "type": "shell",
+      "command": "npm run android",
+      "problemMatcher": [],
+      "presentation": { "panel": "dedicated", "focus": true, "clear": true }
+    },
+    {
+      "label": "▶ iOS (simulador de Xcode)",
+      "type": "shell",
+      "command": "npm run ios",
+      "problemMatcher": [],
+      "presentation": { "panel": "dedicated", "focus": true, "clear": true }
+    },
+    {
+      "label": "▶ iPhone real (conectado por cable)",
+      "type": "shell",
+      "command": "npm run ios:iphone",
+      "problemMatcher": [],
+      "presentation": { "panel": "dedicated", "focus": true, "clear": true }
+    },
+    {
+      "label": "1. Instalar dependencias (npm install)",
+      "type": "shell",
+      "command": "npm install",
+      "problemMatcher": []
+    },
+    {
+      "label": "Revisar entorno (ns doctor)",
+      "type": "shell",
+      "command": "npm run doctor",
+      "problemMatcher": []
+    },
+    {
+      "label": "Limpiar compilación (ns clean)",
+      "type": "shell",
+      "command": "npm run limpiar",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "plataforma",
+      "type": "pickString",
+      "description": "¿En qué emulador quieres ejecutar la app?",
+      "options": [
+        { "label": "Android – emulador de Android Studio", "value": "android" },
+        { "label": "iOS – simulador de iPhone (Xcode)", "value": "ios" },
+        { "label": "iPhone real conectado por cable", "value": "ios:iphone" }
+      ],
+      "default": "android"
+    }
+  ]
+}
