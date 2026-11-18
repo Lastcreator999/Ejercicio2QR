@@ -48,9 +48,9 @@ Si en la Mac del salón ya se hizo este paso antes, puedes saltar al paso 0.4.
 2. Si pide instalar componentes adicionales, acepta.
 3. En Xcode > Settings > Components (en versiones viejas se llama Platforms) descarga el simulador de iOS si no aparece instalado.
 
-### 0.3 Revisar Node.js, Git y CocoaPods
+### 0.3 Revisar Node.js y Git
 
-Estos comandos solo muestran la versión instalada. Si alguno responde `command not found` (Mac) o "no se reconoce como nombre de un cmdlet" (Windows), instálalo con el comando de abajo.
+Estos comandos solo muestran la versión instalada. Si alguno responde `command not found` (Mac) o "no se reconoce como nombre de un cmdlet" (Windows), instálalo como se indica abajo.
 
 macOS:
 
@@ -58,8 +58,6 @@ macOS:
 node -v        # debe mostrar v20 o mayor (recomendado v22)
 npm -v
 git --version
-pod --version  # CocoaPods, lo necesita iOS
-python3 -c "import six; print('six ok')"   # ns doctor ios revisa Python y el paquete six
 ```
 
 Windows (PowerShell):
@@ -72,19 +70,7 @@ git --version
 
 Si falta algo:
 
-macOS (con [Homebrew](https://brew.sh)):
-
-```bash
-brew install node@22
-brew install git
-brew install cocoapods
-brew install python
-python3 -m pip install six
-# si responde "externally-managed-environment":
-python3 -m pip install --user --break-system-packages six
-```
-
-La guía oficial de NativeScript instala Node con nvm, CocoaPods con `gem install cocoapods` (sobre el Ruby de Homebrew) y el JDK 21 aparte con `brew install --cask temurin@21`. Los comandos de arriba son un atajo que también funciona; si tu Mac ya tiene alguno instalado de la forma oficial, no lo reinstales.
+macOS: no hace falta Homebrew. Si falta Node.js, descarga el instalador LTS (`.pkg`) de [nodejs.org](https://nodejs.org) y ábrelo. Si falta Git, el comando `git --version` ofrece instalar las herramientas de línea de comandos de Xcode; acepta (es lo mismo que `xcode-select --install` del paso 0.4).
 
 Windows (PowerShell):
 
@@ -96,22 +82,88 @@ winget install Google.AndroidStudio
 
 Después de instalar algo en Windows cierra PowerShell y ábrelo de nuevo para que reconozca los programas nuevos.
 
-### 0.4 Variables de entorno de Android
+### 0.4 Instalar NativeScript y revisar con ns doctor
 
-NativeScript necesita saber dónde está el SDK de Android (`ANDROID_HOME`) y qué Java usar (`JAVA_HOME`). No hace falta instalar Java aparte: usamos el que viene dentro de Android Studio.
-
-Estos comandos valen solo para la terminal que tienes abierta. Si abres otra terminal, vuelve a ejecutarlos (o hazlos permanentes con el bloque de más abajo).
+1. Instala la CLI de NativeScript de forma global:
 
 macOS:
 
 ```bash
-export ANDROID_HOME="$HOME/Library/Android/sdk"
-export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
-export PATH="$JAVA_HOME/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
+npm install -g nativescript
+# si responde EACCES o "permission denied", usa:
+sudo npm install -g nativescript
+```
 
-# Comprobación: deben mostrar una versión, no un error
+Windows (PowerShell):
+
+```powershell
+npm install -g nativescript
+```
+
+2. Comprueba que quedó instalada y revisa la computadora:
+
+macOS y Windows:
+
+```bash
+ns --version
+ns doctor
+```
+
+3. Solo Mac, para iOS: instala las herramientas de línea de comandos de Xcode y CocoaPods. `sudo` pide la contraseña de administrador de la Mac.
+
+```bash
+xcode-select --install
+sudo gem install cocoapods
+```
+
+Si `xcode-select --install` responde que ya están instaladas, sigue con la siguiente línea.
+
+4. Vuelve a ejecutar `ns doctor`. No debe marcar errores. Si aparece un aviso sobre `ANDROID_HOME` o `JAVA_HOME`, sigue con el paso 0.5.
+
+### 0.5 Variables de entorno de Android
+
+NativeScript necesita saber dónde está el SDK de Android (`ANDROID_HOME`) y qué Java usar (`JAVA_HOME`).
+
+macOS:
+
+1. Revisa qué Java tienes:
+
+```bash
 java -version
-adb version
+/usr/libexec/java_home -v 21   # debe mostrar una ruta; si da error, mira la nota de abajo
+```
+
+2. Abre el archivo de configuración de la terminal con el editor nano:
+
+```bash
+nano ~/.zshrc
+```
+
+3. Pega estas líneas al final del archivo:
+
+```bash
+export JAVA_HOME=$(/usr/libexec/java_home -v 21)
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+```
+
+`$HOME` es tu carpeta de usuario (en las Mac del salón es `/Users/Alumnos`). Si en Finder la carpeta del SDK tiene otro nombre, revísalo en Android Studio > Settings > Languages & Frameworks > Android SDK (campo Android SDK Location) y usa esa ruta.
+
+4. Guarda y sal de nano: `Ctrl + O`, `Enter` y luego `Ctrl + X`.
+
+5. Recarga la configuración y vuelve a revisar:
+
+```bash
+source ~/.zshrc
+ns doctor android
+```
+
+Nota: si `/usr/libexec/java_home -v 21` da error, la Mac no tiene el JDK 21. Puedes usar el Java que trae Android Studio cambiando la primera línea del paso 3 por:
+
+```bash
+export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
 ```
 
 Windows (PowerShell):
@@ -126,46 +178,30 @@ java -version
 adb version
 ```
 
-La guía oficial de NativeScript para Windows configura estas variables desde la ventana Editar las variables de entorno del sistema y usa cmd con la sintaxis `%LOCALAPPDATA%`. En PowerShell esa sintaxis no funciona; por eso aquí se escribe `$env:LOCALAPPDATA`. El resultado es el mismo.
-
-Para que queden guardadas (opcional, recomendado en tu computadora personal):
-
-macOS:
-
-```bash
-cat >> ~/.zshrc <<'EOF'
-export ANDROID_HOME="$HOME/Library/Android/sdk"
-export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
-export PATH="$JAVA_HOME/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
-EOF
-source ~/.zshrc
-```
-
-Windows (PowerShell):
+Estos comandos de Windows valen solo para la ventana de PowerShell abierta. Para que queden guardados:
 
 ```powershell
 [Environment]::SetEnvironmentVariable("ANDROID_HOME", "$env:LOCALAPPDATA\Android\Sdk", "User")
 [Environment]::SetEnvironmentVariable("JAVA_HOME", "C:\Program Files\Android\Android Studio\jbr", "User")
 # Cierra y vuelve a abrir PowerShell
+ns doctor android
 ```
 
-### 0.5 Revisar que todo esté listo
+La guía oficial de NativeScript para Windows configura estas variables desde la ventana Editar las variables de entorno del sistema y usa cmd con la sintaxis `%LOCALAPPDATA%`. En PowerShell esa sintaxis no funciona; por eso aquí se escribe `$env:LOCALAPPDATA`. El resultado es el mismo.
 
-`ns doctor` es la herramienta de NativeScript que revisa la computadora. Con `npx` se usa sin instalar nada global (la primera vez tarda un poco porque la descarga).
+`ns doctor` (en Mac) y `ns doctor android` (en Windows) deben terminar sin errores rojos antes de pasar al paso 1.
 
-macOS:
+### Resumen rápido para crear cualquier app
+
+Con todo lo anterior listo, una app nueva se crea y se ejecuta así (cambia `nombre-app` por el nombre que quieras, sin espacios ni acentos):
 
 ```bash
-npx --yes nativescript@9 doctor
+ns create nombre-app
+cd nombre-app
+ns run android
 ```
 
-Windows (PowerShell):
-
-```powershell
-npx --yes nativescript@9 doctor android
-```
-
-Debe terminar sin errores rojos. En Mac revisa Android e iOS; en Windows solo Android, porque ahí no se puede compilar iOS.
+Para este ejercicio sigue el paso 1, que usa la plantilla de TypeScript.
 
 ---
 
@@ -421,7 +457,7 @@ El texto es el mensaje que iOS le muestra al usuario al pedir el permiso. Sin es
 ## Paso 8. Ejecutar en Android
 
 1. Abre el emulador desde Android Studio > Device Manager (botón de play). Si prefieres usar tu celular Android, actívale Opciones de desarrollador > Depuración USB y conéctalo por cable.
-2. En la terminal de VS Code, dentro de la carpeta del proyecto, revisa que el dispositivo aparezca y ejecuta la app. Si abriste una terminal nueva, primero repite las variables del paso 0.4.
+2. En la terminal de VS Code, dentro de la carpeta del proyecto, revisa que el dispositivo aparezca y ejecuta la app. Si en Windows abriste una terminal nueva y no guardaste las variables, repite el paso 0.5.
 
 macOS:
 
@@ -511,7 +547,7 @@ adb shell pm grant org.nativescript.Ejercicio2QR android.permission.CAMERA
 
 ## Atajos que trae este repositorio
 
-Si descargaste este repositorio en vez de crear el proyecto desde cero, tiene atajos que configuran las variables del paso 0.4 automáticamente (el script `scripts/ejecutar.js` busca el SDK y el Java de Android Studio).
+Si descargaste este repositorio en vez de crear el proyecto desde cero, tiene atajos que configuran las variables del paso 0.5 automáticamente (el script `scripts/ejecutar.js` busca el SDK y el Java de Android Studio).
 
 | Comando (macOS y Windows) | Qué hace |
 |---|---|
@@ -533,14 +569,14 @@ El repositorio trae el workflow `.github/workflows/compilar.yml`, que compila An
 
 | Síntoma | Solución |
 |---|---|
-| `ANDROID_HOME` o `JAVA_HOME` no encontrado | Repite el paso 0.4 en la terminal que estás usando. |
+| `ANDROID_HOME` o `JAVA_HOME` no encontrado | Repite el paso 0.5 y ejecuta `source ~/.zshrc` (Mac) o abre otra ventana de PowerShell (Windows). |
 | *Non-ASCII characters in path* | Mueve el proyecto a una ruta sin espacios ni acentos, como `~/proyectos` o `C:\proyectos`. |
 | `adb devices` no muestra nada | Arranca el emulador desde Device Manager y espera a que cargue la pantalla de inicio. |
 | No arranca ningún emulador | Ábrelo tú desde Android Studio > Device Manager y vuelve a ejecutar el comando. |
-| `pod: command not found` | `brew install cocoapods` y abre otra terminal. |
+| `pod: command not found` | `sudo gem install cocoapods` y abre otra terminal. |
 | La app de iOS falla al cambiar entre simulador e iPhone | `npx ns clean` (o `npm run limpiar`) y vuelve a ejecutar. |
 | La cámara se ve negra | Presiona Activar cámara y acepta el permiso. En el emulador revisa la opción de Webcam0 del paso 10. |
-| Error de Gradle con Java 25 | Usa el Java de Android Studio (paso 0.4) o instala el JDK 21: `brew install --cask temurin@21` en Mac, `winget install EclipseAdoptium.Temurin.21.JDK` en Windows. |
+| Error de Gradle con Java 25 | Usa el Java de Android Studio (nota del paso 0.5) o instala el JDK 21: descarga el `.pkg` de Temurin 21 en [adoptium.net](https://adoptium.net) en Mac, `winget install EclipseAdoptium.Temurin.21.JDK` en Windows. |
 
 ---
 
