@@ -59,6 +59,7 @@ node -v        # debe mostrar v20 o mayor (recomendado v22)
 npm -v
 git --version
 pod --version  # CocoaPods, lo necesita iOS
+python3 -c "import six; print('six ok')"   # ns doctor ios revisa Python y el paquete six
 ```
 
 Windows (PowerShell):
@@ -77,7 +78,13 @@ macOS (con [Homebrew](https://brew.sh)):
 brew install node@22
 brew install git
 brew install cocoapods
+brew install python
+python3 -m pip install six
+# si responde "externally-managed-environment":
+python3 -m pip install --user --break-system-packages six
 ```
+
+La guía oficial de NativeScript instala Node con nvm, CocoaPods con `gem install cocoapods` (sobre el Ruby de Homebrew) y el JDK 21 aparte con `brew install --cask temurin@21`. Los comandos de arriba son un atajo que también funciona; si tu Mac ya tiene alguno instalado de la forma oficial, no lo reinstales.
 
 Windows (PowerShell):
 
@@ -118,6 +125,8 @@ $env:Path = "$env:JAVA_HOME\bin;$env:ANDROID_HOME\platform-tools;$env:ANDROID_HO
 java -version
 adb version
 ```
+
+La guía oficial de NativeScript para Windows configura estas variables desde la ventana Editar las variables de entorno del sistema y usa cmd con la sintaxis `%LOCALAPPDATA%`. En PowerShell esa sintaxis no funciona; por eso aquí se escribe `$env:LOCALAPPDATA`. El resultado es el mismo.
 
 Para que queden guardadas (opcional, recomendado en tu computadora personal):
 
@@ -474,7 +483,8 @@ macOS:
 ```bash
 npx ns clean
 npm install
-npx ns run ios --device
+npx ns devices ios             # copia el Device Identifier de tu iPhone
+npx ns run ios --device <id>   # pega el identificador en lugar de <id>
 ```
 
 3. Si aparece un error de firma (*signing*), abre `platforms/ios/Ejercicio2QR.xcworkspace` en Xcode, selecciona el proyecto Ejercicio2QR, entra a la pestaña Signing & Capabilities, elige tu Team (inicia sesión con tu Apple ID si no aparece ninguno) y vuelve a ejecutar el último comando.
